@@ -6,7 +6,10 @@
     "MIT"
   ],
   "version": "1.0.0",
-  "authors": [
+    "require": {
+        "adyen/module-payment": "^6.7||^7.0"
+    },
+    "authors": [
     {
       "name": "SUBSCRIBE PRO INC",
       "homepage": "http://www.subscribepro.com"
