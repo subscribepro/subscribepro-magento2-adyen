@@ -8,6 +8,7 @@ use Magento\Framework\Event\Observer;
 use Magento\Payment\Observer\AbstractDataAssignObserver;
 use Magento\Quote\Api\Data\PaymentInterface;
 use Adyen\Payment\Observer\AdyenCcDataAssignObserver as AdyenAssignObserver;
+use Magento\Vault\Api\Data\PaymentTokenInterface;
 use Magento\Vault\Model\Ui\VaultConfigProvider;
 
 class AdyenCcDataAssignObserver extends AbstractDataAssignObserver
@@ -59,17 +60,16 @@ class AdyenCcDataAssignObserver extends AbstractDataAssignObserver
         $paymentInfo = $this->readPaymentModelArgument($observer);
 
         $additionalData = $data->getData(PaymentInterface::KEY_ADDITIONAL_DATA);
-        if (!is_array($additionalData)
-            || empty($additionalData[AdyenAssignObserver::STATE_DATA])
-        ) {
+        if (!is_array($additionalData) || !empty($additionalData[PaymentTokenInterface::PUBLIC_HASH])) {
             return;
         }
 
-        $stateData = $paymentInfo->getAdditionalInformation(AdyenAssignObserver::STATE_DATA);
-        $stateData[AdyenAssignObserver::STORE_PAYMENT_METHOD] = true;
+        $stateData = $paymentInfo->getAdditionalInformation('stateData'); // AdyenAssignObserver::STATE_DATA
+        if (is_array($stateData)) {
+            $stateData['storePaymentMethod'] = true;                      // AdyenAssignObserver::STORE_PAYMENT_METHOD
+            $paymentInfo->setAdditionalInformation('stateData', $stateData);
+        }
 
-        $paymentInfo->setAdditionalInformation(AdyenAssignObserver::STATE_DATA, $stateData);
-        $paymentInfo->setAdditionalInformation(AdyenAssignObserver::STORE_PAYMENT_METHOD, true);
         $paymentInfo->setAdditionalInformation(AdyenAssignObserver::STORE_CC, true);
         $paymentInfo->setAdditionalInformation(VaultConfigProvider::IS_ACTIVE_CODE, true);
 
