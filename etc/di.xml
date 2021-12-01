@@ -4,6 +4,7 @@
         <arguments>
             <argument name="supportedMethods" xsi:type="array">
                 <item name="adyen_cc" xsi:type="string">adyen_cc</item>
+                <item name="adyen_hpp" xsi:type="string">adyen_hpp</item>
             </argument>
         </arguments>
     </type>
@@ -11,6 +12,7 @@
         <arguments>
             <argument name="paymentProfileDataBuilders" xsi:type="array">
                 <item name="adyen_cc" xsi:type="object">Swarming\SubscribeProAdyen\Service\PaymentProfileDataBuilder</item>
+                <item name="adyen_hpp" xsi:type="object">Swarming\SubscribeProAdyen\Service\PaymentProfileDataBuilder</item>
             </argument>
         </arguments>
     </type>
