@@ -3,8 +3,7 @@
     <default>
         <swarming_subscribepro>
             <third_party_payment>
-                <adyen_cc>adyen_cc_vault</adyen_cc>
-                <adyen_hpp>adyen_cc_vault</adyen_hpp>
+                <method_vault>adyen_cc_vault</method_vault>
             </third_party_payment>
         </swarming_subscribepro>
     </default>
