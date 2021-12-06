@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Swarming\SubscribeProAdyen\Observer\Payment;
 
 use Adyen\Payment\Model\Ui\AdyenCcConfigProvider;
+use Adyen\Payment\Model\Ui\AdyenHppConfigProvider;
 use Magento\Framework\Event\Observer;
 use Magento\Quote\Api\Data\PaymentInterface;
 use Magento\Quote\Model\Quote\Payment as QuotePayment;
@@ -54,11 +55,7 @@ class TokenAssigner extends \Magento\Payment\Observer\AbstractDataAssignObserver
             return;
         }
 
-        $paymentToken = $this->paymentTokenManagement->getByGatewayToken(
-            $paymentMethodToken,
-            AdyenCcConfigProvider::CODE,
-            $customerId
-        );
+        $paymentToken = $this->getPaymentToken($paymentMethodToken, (int)$customerId);
         if ($paymentToken === null) {
             return;
         }
@@ -79,5 +76,26 @@ class TokenAssigner extends \Magento\Payment\Observer\AbstractDataAssignObserver
                 $additionalData[TransactionInterface::SUBSCRIBE_PRO_ORDER_TOKEN]
             );
         }
+    }
+
+    /**
+     * @param string $paymentMethodToken
+     * @param int $customerId
+     * @return PaymentTokenInterface|null Payment token interface
+     */
+    private function getPaymentToken(
+        string $paymentMethodToken,
+        int $customerId
+    ) {
+        $token = $this->paymentTokenManagement->getByGatewayToken(
+            $paymentMethodToken,
+            AdyenCcConfigProvider::CODE,
+            $customerId
+        ) ?? $this->paymentTokenManagement->getByGatewayToken(
+            $paymentMethodToken,
+            AdyenHppConfigProvider::CODE,
+            $customerId
+        );
+        return $token;
     }
 }

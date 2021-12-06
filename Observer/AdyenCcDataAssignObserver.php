@@ -49,7 +49,8 @@ class AdyenCcDataAssignObserver extends AbstractDataAssignObserver
      */
     public function execute(Observer $observer): void
     {
-        $quote = $this->checkoutSession->getQuote();
+        $paymentInfo = $this->readPaymentModelArgument($observer);
+        $quote = $paymentInfo->getQuote();
 
         $websiteCode = $quote->getStore()->getWebsite()->getCode();
         if (!$this->generalConfig->isEnabled($websiteCode) || !$this->quoteHelper->hasSubscription($quote)) {
@@ -57,7 +58,6 @@ class AdyenCcDataAssignObserver extends AbstractDataAssignObserver
         }
 
         $data = $this->readDataArgument($observer);
-        $paymentInfo = $this->readPaymentModelArgument($observer);
 
         $additionalData = $data->getData(PaymentInterface::KEY_ADDITIONAL_DATA);
         if (!is_array($additionalData) || !empty($additionalData[PaymentTokenInterface::PUBLIC_HASH])) {
