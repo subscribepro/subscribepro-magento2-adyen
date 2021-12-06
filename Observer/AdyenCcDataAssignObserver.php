@@ -19,27 +19,19 @@ class AdyenCcDataAssignObserver extends AbstractDataAssignObserver
     private $generalConfig;
 
     /**
-     * @var \Magento\Checkout\Model\Session
-     */
-    private $checkoutSession;
-
-    /**
      * @var \Swarming\SubscribePro\Helper\Quote
      */
     private $quoteHelper;
 
     /**
      * @param \Swarming\SubscribePro\Model\Config\General $generalConfig
-     * @param \Magento\Checkout\Model\Session $checkoutSession
      * @param \Swarming\SubscribePro\Helper\Quote $quoteHelper
      */
     public function __construct(
         \Swarming\SubscribePro\Model\Config\General $generalConfig,
-        \Magento\Checkout\Model\Session $checkoutSession,
         \Swarming\SubscribePro\Helper\Quote $quoteHelper
     ) {
         $this->generalConfig = $generalConfig;
-        $this->checkoutSession = $checkoutSession;
         $this->quoteHelper = $quoteHelper;
     }
 
