@@ -11,10 +11,7 @@
     <type name="Swarming\SubscribePro\Model\Config\Source\ThirdPartyPaymentVault">
         <arguments>
             <argument name="supportedVaults" xsi:type="array">
-                <item name="adyen_cc_vault" xsi:type="array">
-                    <item name="name" xsi:type="string">Adyen Vault</item>
-                    <item name="code" xsi:type="string">adyen_cc_vault</item>
-                </item>
+                <item name="adyen_cc" xsi:type="string">adyen_cc_vault</item>
             </argument>
         </arguments>
     </type>
