@@ -81,21 +81,18 @@ class TokenAssigner extends \Magento\Payment\Observer\AbstractDataAssignObserver
     /**
      * @param string $paymentMethodToken
      * @param int $customerId
-     * @return PaymentTokenInterface|null Payment token interface
+     * @return \Magento\Vault\Api\Data\PaymentTokenInterface|null
      */
-    private function getPaymentToken(
-        string $paymentMethodToken,
-        int $customerId
-    ) {
-        $token = $this->paymentTokenManagement->getByGatewayToken(
+    private function getPaymentToken(string $paymentMethodToken, int $customerId): ?PaymentTokenInterface
+    {
+        return $this->paymentTokenManagement->getByGatewayToken(
             $paymentMethodToken,
             AdyenCcConfigProvider::CODE,
             $customerId
-        ) ?? $this->paymentTokenManagement->getByGatewayToken(
+        ) ?: $this->paymentTokenManagement->getByGatewayToken(
             $paymentMethodToken,
             AdyenHppConfigProvider::CODE,
             $customerId
         );
-        return $token;
     }
 }
