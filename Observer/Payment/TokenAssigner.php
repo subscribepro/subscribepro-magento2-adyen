@@ -16,7 +16,7 @@ class TokenAssigner extends \Magento\Payment\Observer\AbstractDataAssignObserver
     /**
      * @var \Magento\Vault\Api\PaymentTokenManagementInterface
      */
-    private $paymentTokenManagement;
+    protected $paymentTokenManagement;
 
     /**
      * @param \Magento\Vault\Api\PaymentTokenManagementInterface $paymentTokenManagement
@@ -54,11 +54,7 @@ class TokenAssigner extends \Magento\Payment\Observer\AbstractDataAssignObserver
             return;
         }
 
-        $paymentToken = $this->paymentTokenManagement->getByGatewayToken(
-            $paymentMethodToken,
-            AdyenCcConfigProvider::CODE,
-            $customerId
-        );
+        $paymentToken = $this->getPaymentToken($paymentMethodToken, (int)$customerId);
         if ($paymentToken === null) {
             return;
         }
@@ -79,5 +75,19 @@ class TokenAssigner extends \Magento\Payment\Observer\AbstractDataAssignObserver
                 $additionalData[TransactionInterface::SUBSCRIBE_PRO_ORDER_TOKEN]
             );
         }
+    }
+
+    /**
+     * @param string $paymentMethodToken
+     * @param int $customerId
+     * @return \Magento\Vault\Api\Data\PaymentTokenInterface|null
+     */
+    protected function getPaymentToken(string $paymentMethodToken, int $customerId): ?PaymentTokenInterface
+    {
+        return $this->paymentTokenManagement->getByGatewayToken(
+            $paymentMethodToken,
+            AdyenCcConfigProvider::CODE,
+            $customerId
+        );
     }
 }
