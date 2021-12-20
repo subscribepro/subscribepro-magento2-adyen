@@ -35,7 +35,7 @@ class PaymentProfileDataBuilder implements PaymentProfileDataBuilderInterface
             PaymentProfileInterface::CUSTOMER_ID => $platformCustomerId,
             PaymentProfileInterface::PAYMENT_TOKEN => $paymentToken->getGatewayToken(),
             PaymentProfileInterface::CREDITCARD_TYPE =>
-                $tokenDetails['type'] ? $this->translateCCType($tokenDetails['type']) : null,
+                isset($tokenDetails['type']) ? $this->translateCCType($tokenDetails['type']) : null,
             PaymentProfileInterface::CREDITCARD_LAST_DIGITS => ($tokenDetails['maskedCC'] ?? null),
             PaymentProfileInterface::CREDITCARD_MONTH => (explode('/', $expirationDate)[0] ?? null),
             PaymentProfileInterface::CREDITCARD_YEAR => (explode('/', $expirationDate)[1] ?? null),
