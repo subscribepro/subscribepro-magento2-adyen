@@ -19,27 +19,19 @@ class AdyenCcDataAssignObserver extends AbstractDataAssignObserver
     private $generalConfig;
 
     /**
-     * @var \Magento\Checkout\Model\Session
-     */
-    private $checkoutSession;
-
-    /**
      * @var \Swarming\SubscribePro\Helper\Quote
      */
     private $quoteHelper;
 
     /**
      * @param \Swarming\SubscribePro\Model\Config\General $generalConfig
-     * @param \Magento\Checkout\Model\Session $checkoutSession
      * @param \Swarming\SubscribePro\Helper\Quote $quoteHelper
      */
     public function __construct(
         \Swarming\SubscribePro\Model\Config\General $generalConfig,
-        \Magento\Checkout\Model\Session $checkoutSession,
         \Swarming\SubscribePro\Helper\Quote $quoteHelper
     ) {
         $this->generalConfig = $generalConfig;
-        $this->checkoutSession = $checkoutSession;
         $this->quoteHelper = $quoteHelper;
     }
 
@@ -49,7 +41,8 @@ class AdyenCcDataAssignObserver extends AbstractDataAssignObserver
      */
     public function execute(Observer $observer): void
     {
-        $quote = $this->checkoutSession->getQuote();
+        $paymentInfo = $this->readPaymentModelArgument($observer);
+        $quote = $paymentInfo->getQuote();
 
         $websiteCode = $quote->getStore()->getWebsite()->getCode();
         if (!$this->generalConfig->isEnabled($websiteCode) || !$this->quoteHelper->hasSubscription($quote)) {
@@ -57,7 +50,6 @@ class AdyenCcDataAssignObserver extends AbstractDataAssignObserver
         }
 
         $data = $this->readDataArgument($observer);
-        $paymentInfo = $this->readPaymentModelArgument($observer);
 
         $additionalData = $data->getData(PaymentInterface::KEY_ADDITIONAL_DATA);
         if (!is_array($additionalData) || !empty($additionalData[PaymentTokenInterface::PUBLIC_HASH])) {

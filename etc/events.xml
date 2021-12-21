@@ -3,7 +3,26 @@
     <event name="payment_method_assign_data_adyen_cc">
         <observer name="subscribepro_adyen_cc_gateway_data_assign" instance="Swarming\SubscribeProAdyen\Observer\AdyenCcDataAssignObserver" />
     </event>
+    <event name="payment_method_assign_data_adyen_google_pay">
+        <observer name="subscribepro_adyen_google_pay_gateway_data_assign" instance="Swarming\SubscribeProAdyen\Observer\AdyenCcDataAssignObserver" />
+    </event>
+    <event name="payment_method_assign_data_adyen_apple_pay">
+        <observer name="subscribepro_adyen_apple_pay_gateway_data_assign" instance="Swarming\SubscribeProAdyen\Observer\AdyenCcDataAssignObserver" />
+    </event>
+    <event name="payment_method_assign_data_adyen_hpp">
+        <observer name="subscribepro_adyen_hpp_gateway_data_assign" instance="Swarming\SubscribeProAdyen\Observer\AdyenCcDataAssignObserver" />
+    </event>
+    <!--These are necessary to show the stored cards during admin order creation-->
     <event name="payment_method_assign_data_vault_adyen_cc">
         <observer name="subscribepro_vault_adyen_cc_gateway_data_assign" instance="Swarming\SubscribeProAdyen\Observer\Payment\TokenAssigner" />
+    </event>
+    <event name="payment_method_assign_data_vault_adyen_hpp">
+        <observer name="subscribepro_vault_adyen_cc_gateway_data_assign" instance="Swarming\SubscribeProAdyen\Observer\Payment\TokenAssigner" />
+    </event>
+    <event name="payment_method_assign_data_vault_adyen_google_pay">
+        <observer name="subscribepro_vault_adyen_cc_gateway_data_assign" instance="Swarming\SubscribeProAdyen\Observer\Payment\GooglePayTokenAssigner" />
+    </event>
+    <event name="payment_method_assign_data_vault_adyen_apple_pay">
+        <observer name="subscribepro_vault_adyen_cc_gateway_data_assign" instance="Swarming\SubscribeProAdyen\Observer\Payment\ApplePayTokenAssigner" />
     </event>
 </config>
