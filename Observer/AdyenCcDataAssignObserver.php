@@ -24,15 +24,23 @@ class AdyenCcDataAssignObserver extends AbstractDataAssignObserver
     private $quoteHelper;
 
     /**
+     * @var \Adyen\Payment\Helper\StateData
+     */
+    private $stateData;
+
+    /**
      * @param \Swarming\SubscribePro\Model\Config\General $generalConfig
-     * @param \Swarming\SubscribePro\Helper\Quote $quoteHelper
+     * @param \Swarming\SubscribePro\Helper\Quote         $quoteHelper
+     * @param \Adyen\Payment\Helper\StateData             $stateData
      */
     public function __construct(
         \Swarming\SubscribePro\Model\Config\General $generalConfig,
-        \Swarming\SubscribePro\Helper\Quote $quoteHelper
+        \Swarming\SubscribePro\Helper\Quote $quoteHelper,
+        \Adyen\Payment\Helper\StateData $stateData
     ) {
         $this->generalConfig = $generalConfig;
         $this->quoteHelper = $quoteHelper;
+        $this->stateData = $stateData;
     }
 
     /**
@@ -56,11 +64,10 @@ class AdyenCcDataAssignObserver extends AbstractDataAssignObserver
             return;
         }
 
-        $stateData = $paymentInfo->getAdditionalInformation('stateData'); // AdyenAssignObserver::STATE_DATA
-        if (is_array($stateData)) {
-            $stateData['storePaymentMethod'] = true;                      // AdyenAssignObserver::STORE_PAYMENT_METHOD
-            $paymentInfo->setAdditionalInformation('stateData', $stateData);
-        }
+        // This works on Adyen 7.x
+        $stateData = $this->stateData->getStateData((int)$paymentInfo->getData('quote_id'));
+        $stateData['storePaymentMethod'] = true;
+        $this->stateData->setStateData($stateData, (int)$paymentInfo->getData('quote_id'));
 
         $paymentInfo->setAdditionalInformation(AdyenAssignObserver::STORE_CC, true);
         $paymentInfo->setAdditionalInformation(VaultConfigProvider::IS_ACTIVE_CODE, true);
