@@ -4,6 +4,7 @@
         <arguments>
             <argument name="supportedMethods" xsi:type="array">
                 <item name="adyen_cc" xsi:type="string">adyen_cc</item>
+                <item name="adyen_cc_vault" xsi:type="string">adyen_cc_vault</item>
                 <item name="adyen_hpp" xsi:type="string">adyen_hpp</item>
                 <item name="adyen_apple_pay" xsi:type="string">adyen_apple_pay</item>
                 <item name="adyen_google_pay" xsi:type="string">adyen_google_pay</item>
@@ -14,6 +15,7 @@
         <arguments>
             <argument name="paymentProfileDataBuilders" xsi:type="array">
                 <item name="adyen_cc" xsi:type="object">Swarming\SubscribeProAdyen\Service\PaymentProfileDataBuilder</item>
+                <item name="adyen_cc_vault" xsi:type="object">Swarming\SubscribeProAdyen\Service\PaymentProfileDataBuilder</item>
                 <item name="adyen_hpp" xsi:type="object">Swarming\SubscribeProAdyen\Service\PaymentProfileDataBuilder</item>
                 <item name="adyen_apple_pay" xsi:type="object">Swarming\SubscribeProAdyen\Service\PaymentProfileDataBuilder</item>
                 <item name="adyen_google_pay" xsi:type="object">Swarming\SubscribeProAdyen\Service\PaymentProfileDataBuilder</item>
