@@ -27,6 +27,7 @@ class AdyenCcDataAssignObserver extends AbstractDataAssignObserver
      * @var \Adyen\Payment\Helper\StateData
      */
     private $stateData;
+    private \Psr\Log\LoggerInterface $logger;
 
     /**
      * @param \Swarming\SubscribePro\Model\Config\General $generalConfig
@@ -36,11 +37,13 @@ class AdyenCcDataAssignObserver extends AbstractDataAssignObserver
     public function __construct(
         \Swarming\SubscribePro\Model\Config\General $generalConfig,
         \Swarming\SubscribePro\Helper\Quote $quoteHelper,
-        \Adyen\Payment\Helper\StateData $stateData
+        \Adyen\Payment\Helper\StateData $stateData,
+        \Psr\Log\LoggerInterface $logger
     ) {
         $this->generalConfig = $generalConfig;
         $this->quoteHelper = $quoteHelper;
         $this->stateData = $stateData;
+        $this->logger = $logger;
     }
 
     /**
@@ -54,19 +57,28 @@ class AdyenCcDataAssignObserver extends AbstractDataAssignObserver
 
         $websiteCode = $quote->getStore()->getWebsite()->getCode();
         if (!$this->generalConfig->isEnabled($websiteCode) || !$this->quoteHelper->hasSubscription($quote)) {
+            $this->logger->debug('SS PRO: AdyenCcDataAssignObserver: Not enabled or no subscription');
             return;
         }
 
         $data = $this->readDataArgument($observer);
 
         $additionalData = $data->getData(PaymentInterface::KEY_ADDITIONAL_DATA);
-        if (!is_array($additionalData) || !empty($additionalData[PaymentTokenInterface::PUBLIC_HASH])) {
+        if (!is_array($additionalData)) {
+            $this->logger->debug('SS PRO: AdyenCcDataAssignObserver: No additional data or public hash found');
+            return;
+        }
+
+        if (!isset($additionalData[PaymentTokenInterface::PUBLIC_HASH])) {
+            $this->logger->debug('SS PRO: AdyenCcDataAssignObserver: additionalData: ' . print_r($additionalData, true));
+            $this->logger->debug('SS PRO: AdyenCcDataAssignObserver: No public hash found');
             return;
         }
 
         // This works on Adyen 7.x
         $stateData = $this->stateData->getStateData((int)$paymentInfo->getData('quote_id'));
         $stateData['storePaymentMethod'] = true;
+
         $this->stateData->setStateData($stateData, (int)$paymentInfo->getData('quote_id'));
 
         $paymentInfo->setAdditionalInformation(AdyenAssignObserver::STORE_CC, true);
