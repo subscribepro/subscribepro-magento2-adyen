@@ -69,9 +69,9 @@ class AdyenCcDataAssignObserver extends AbstractDataAssignObserver
             return;
         }
 
-        if (!isset($additionalData[PaymentTokenInterface::PUBLIC_HASH])) {
+        if (!empty($additionalData[PaymentTokenInterface::PUBLIC_HASH])) {
             $this->logger->debug('SS PRO: AdyenCcDataAssignObserver: additionalData: ' . print_r($additionalData, true));
-            $this->logger->debug('SS PRO: AdyenCcDataAssignObserver: No public hash found');
+            $this->logger->debug('SS PRO: AdyenCcDataAssignObserver: Public hash !empty');
             return;
         }
 
