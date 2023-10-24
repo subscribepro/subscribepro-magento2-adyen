@@ -18,7 +18,7 @@ define([
                         }
                     });
                 });
-                if (storeCc) {
+                if (storeCc && stateData) {
                     stateData.storePaymentMethod = true;
                     window.sessionStorage.setItem('adyen.stateData', JSON.stringify(stateData));
                 }

@@ -27,4 +27,9 @@
         <plugin name="adyen_payment_gateway_request_recurring_vault_data_builder_subscribepro_plugin"
                 type="Swarming\SubscribeProAdyen\Plugin\AdyenRecurringVaultDataBuilder" sortOrder="10" />
     </type>
+    <type name="Magento\Vault\Model\CustomerTokenManagement">
+        <plugin name="FilterVaultTokens" disabled="true"/>
+        <plugin name="adyen_vault_model_customer_token_management_subscribepro_plugin"
+                type="Swarming\SubscribeProAdyen\Plugin\VaultCustomerTokenManagement" sortOrder="10" />
+    </type>
 </config>
