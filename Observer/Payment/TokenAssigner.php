@@ -17,14 +17,17 @@ class TokenAssigner extends \Magento\Payment\Observer\AbstractDataAssignObserver
      * @var \Magento\Vault\Api\PaymentTokenManagementInterface
      */
     protected $paymentTokenManagement;
+    private \Psr\Log\LoggerInterface $logger;
 
     /**
      * @param \Magento\Vault\Api\PaymentTokenManagementInterface $paymentTokenManagement
      */
     public function __construct(
-        \Magento\Vault\Api\PaymentTokenManagementInterface $paymentTokenManagement
+        \Magento\Vault\Api\PaymentTokenManagementInterface $paymentTokenManagement,
+        \Psr\Log\LoggerInterface $logger
     ) {
         $this->paymentTokenManagement = $paymentTokenManagement;
+        $this->logger = $logger;
     }
 
     /**
@@ -38,24 +41,37 @@ class TokenAssigner extends \Magento\Payment\Observer\AbstractDataAssignObserver
         $additionalData = $dataObject->getData(PaymentInterface::KEY_ADDITIONAL_DATA);
 
         $paymentMethodToken = $additionalData['payment_method_token'] ?? null;
+
         if (empty($paymentMethodToken)) {
-            return;
+            if (!isset($additionalData['public_hash']) || !(isset($additionalData['customer_id']))) {
+                return;
+            }
+            $paymentTokenObj = $this->paymentTokenManagement->getByPublicHash($additionalData['public_hash'], $additionalData['customer_id']);
+            $paymentMethodToken = $paymentTokenObj->getGatewayToken();
+            $this->logger->debug('SS PRO: TokenAssigner: paymentMethodToken: ' . $paymentMethodToken);
+            if (empty($paymentMethodToken)) {
+                $this->logger->debug('SS PRO: TokenAssigner: paymentMethodToken is empty');
+                return;
+            }
         }
 
         /** @var \Magento\Quote\Model\Quote\Payment $paymentModel */
         $paymentModel = $this->readPaymentModelArgument($observer);
         if (!$paymentModel instanceof QuotePayment) {
+            $this->logger->debug('SS PRO: TokenAssigner: paymentModel is not QuotePayment');
             return;
         }
 
         $quote = $paymentModel->getQuote();
         $customerId = $quote->getCustomer()->getId();
         if ($customerId === null) {
+            $this->logger->debug('SS PRO: TokenAssigner: customerId is null');
             return;
         }
 
         $paymentToken = $this->getPaymentToken($paymentMethodToken, (int)$customerId);
         if ($paymentToken === null) {
+            $this->logger->debug('SS PRO: TokenAssigner: paymentToken is null');
             return;
         }
 
@@ -63,6 +79,7 @@ class TokenAssigner extends \Magento\Payment\Observer\AbstractDataAssignObserver
         $paymentModel->setAdditionalInformation(PaymentTokenInterface::PUBLIC_HASH, $paymentToken->getPublicHash());
 
         if (!empty($additionalData[TransactionInterface::UNIQUE_ID])) {
+            $this->logger->debug('SS PRO: TokenAssigner: uniqueId: ' . $additionalData[TransactionInterface::UNIQUE_ID]);
             $paymentModel->setAdditionalInformation(
                 TransactionInterface::UNIQUE_ID,
                 $additionalData[TransactionInterface::UNIQUE_ID]
@@ -70,6 +87,7 @@ class TokenAssigner extends \Magento\Payment\Observer\AbstractDataAssignObserver
         }
 
         if (!empty($additionalData[TransactionInterface::SUBSCRIBE_PRO_ORDER_TOKEN])) {
+            $this->logger->debug('SS PRO: TokenAssigner: orderToken: ' . $additionalData[TransactionInterface::SUBSCRIBE_PRO_ORDER_TOKEN]);
             $paymentModel->setAdditionalInformation(
                 TransactionInterface::SUBSCRIBE_PRO_ORDER_TOKEN,
                 $additionalData[TransactionInterface::SUBSCRIBE_PRO_ORDER_TOKEN]
