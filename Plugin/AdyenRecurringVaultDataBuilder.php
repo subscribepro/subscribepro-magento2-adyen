@@ -19,7 +19,7 @@ class AdyenRecurringVaultDataBuilder
         $paymentToken = $extensionAttributes->getVaultPaymentToken();
         $details = json_decode($paymentToken->getTokenDetails() ?: '{}', true);
 
-        if ($paymentMethod->getCode() === AdyenCcConfigProvider::CC_VAULT_CODE) {
+        if ($paymentMethod->getCode() === AdyenCcConfigProvider::CC_VAULT_CODE && !isset($result['body']['paymentMethod'])) {
             $result['body'] = array_merge($result['body'], [
                 'paymentMethod' => [
                     'type' => $details['type'],
